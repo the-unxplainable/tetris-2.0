@@ -13,6 +13,7 @@ import time
 # Constants for canvas
 CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
 CANVAS_HEIGHT = 1000    # Height of drawing canvas in pixels
+CANVAS_MID = CANVAS_WIDTH // 2
 UNIT_SIZE = 50          # Size of unit block within shape
 Y_SPEED = 50
 X_SPEED = 50
