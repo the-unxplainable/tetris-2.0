@@ -24,7 +24,7 @@ BLOCK_1_POINTS = [CANVAS_MID - UNIT_SIZE * 2, 0, CANVAS_MID - UNIT_SIZE, UNIT_SI
 BLOCK_2_POINTS = [CANVAS_MID - UNIT_SIZE, 0, CANVAS_MID, UNIT_SIZE]
 BLOCK_3_POINTS = [CANVAS_MID, 0, CANVAS_MID + UNIT_SIZE, UNIT_SIZE]
 BLOCK_4_POINTS = [CANVAS_MID + UNIT_SIZE, 0, CANVAS_MID + UNIT_SIZE * 2, UNIT_SIZE]
-BLOCK_5_POINTS = [CANVAS_MID - UNIT_SIZE * 2, UNIT_SIZE, CANVAS_MID - UNIT_SIZE, UNIT_SIZE]
+BLOCK_5_POINTS = [CANVAS_MID - UNIT_SIZE * 2, UNIT_SIZE, CANVAS_MID - UNIT_SIZE, UNIT_SIZE * 2]
 BLOCK_6_POINTS = [CANVAS_MID - UNIT_SIZE, UNIT_SIZE, CANVAS_MID, UNIT_SIZE * 2]
 BLOCK_7_POINTS = [CANVAS_MID, UNIT_SIZE, CANVAS_MID + UNIT_SIZE, UNIT_SIZE * 2]
 BLOCK_8_POINTS = [CANVAS_MID + UNIT_SIZE, UNIT_SIZE, CANVAS_MID + UNIT_SIZE * 2, UNIT_SIZE * 2]
@@ -38,10 +38,95 @@ def main():
         play_shape(canvas)
         
     canvas.mainloop()
+    
+
+def own_shape(canvas, shape, object_num):
+    if object_num < shape[0] or object_num > shape[3]:
+        return False
+    return True
 
 
 def hit_objects(canvas, shape):
-    print(canvas.find_all())
+    coords = get_shape_coords(canvas, shape)
+    neighbors = []
+    for coord in coords:
+        x1, y1, x2, y2 = coord[0], coord[1], coord[2], coord[3]
+        neighbors.append(canvas.find_overlapping(x1, y1, x2, y2))
+
+    for neighbor in neighbors:
+        for item in neighbor:
+            if item > 28 and not own_shape(canvas, shape, item):
+                return True
+    return False
+
+
+def objects_left(canvas, shape):
+    coords = get_shape_coords(canvas, shape)
+    for coord in coords:
+        x1, y1, x2, y2 = coord[0], coord[1], coord[2], coord[3]
+        coord_bottom_y = canvas.find_overlapping(x1, y2, x2, y2)
+        coord_right_x = canvas.find_overlapping(x2, y1, x2, y2)
+        coord_left_x = canvas.find_overlapping(x1, y1, x1, y2)
+        coord_top_y = canvas.find_overlapping(x1, y1, x2, y1)
+
+        for neighbor in coord_left_x:
+            if neighbor > 28 and not own_shape(canvas, shape, neighbor):
+                if neighbor in coord_top_y and neighbor in coord_bottom_y:
+                    return True
+    return False
+
+
+
+def objects_right(canvas, shape):
+    coords = get_shape_coords(canvas, shape)
+    for coord in coords:
+        x1, y1, x2, y2 = coord[0], coord[1], coord[2], coord[3]
+        coord_bottom_y = canvas.find_overlapping(x1, y2, x2, y2)
+        coord_right_x = canvas.find_overlapping(x2, y1, x2, y2)
+        coord_left_x = canvas.find_overlapping(x1, y1, x1, y2)
+        coord_top_y = canvas.find_overlapping(x1, y1, x2, y1)
+
+        for neighbor in coord_right_x:
+            if neighbor > 28 and not own_shape(canvas, shape, neighbor):
+                if neighbor in coord_top_y and neighbor in coord_bottom_y:
+                    return True
+    return False
+
+
+
+def objects_below(canvas, shape):
+    coords = get_shape_coords(canvas, shape)
+    for coord in coords:
+        x1, y1, x2, y2 = coord[0], coord[1], coord[2], coord[3]
+        coord_y = canvas.find_overlapping(x1, y2, x2, y2)
+        coord_right_x = canvas.find_overlapping(x2, y1, x2, y2)
+        coord_left_x = canvas.find_overlapping(x1, y1, x1, y2)
+
+        for neighbor in coord_y:
+            if neighbor > 28 and not own_shape(canvas, shape, neighbor):
+                if neighbor in coord_right_x and neighbor in coord_left_x:
+                    return True
+    return False
+
+
+    # find the bottom y of each shape
+    # using canvas.coords, determine if this y matches the top y of an object
+    # and the X is x1 difference
+    # so if 
+
+def get_shape_coords_dict(canvas, shape):
+    shape_coords = {}
+    for tetra in shape:
+        shape_coords[tetra] = canvas.coords(tetra)
+    print(shape_coords)
+
+
+def get_shape_coords(canvas, shape):
+    shape_coords = []
+    for tetra in shape:
+        shape_coords.append(canvas.coords(tetra))
+    return shape_coords
+
 
     
     """
@@ -87,7 +172,7 @@ def play_shape(canvas):
 
 
 def make_shape_fall(canvas, shape):
-    while not is_touching_bottom(canvas, shape) and not hit_objects(canvas, shape):
+    while not is_touching_bottom(canvas, shape) and not objects_below(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], 0, Y_SPEED)
         canvas.update()
@@ -108,29 +193,43 @@ def valid_move(canvas, shape):
 
     
 # Get position functions
+def get_all_x_y_coords(canvas, shape):
+    shape_coords = get_shape_coords(canvas, shape)
+    x1 = []
+    y1 = []
+    x2 = []
+    y2 = []
+    for tetra_coord in shape_coords:
+        x1.append(tetra_coord[0])
+        y1.append(tetra_coord[1])
+        x2.append(tetra_coord[2])
+        y2.append(tetra_coord[3])
+    return tuple([x1, y1, x2, y2])
+
+
 def get_left_x(canvas, shape):
-    coords = canvas.coords(shape[0])
-    return coords[0]
+    coords = get_all_x_y_coords(canvas, shape)
+    return min(coords[0])
 
 
 def get_top_y(canvas, shape):
-    coords = canvas.coords(shape[0])
-    return coords[1]
+    coords = get_all_x_y_coords(canvas, shape)
+    return min(coords[1])
 
 
 def get_right_x(canvas, shape):
-    coords = canvas.coords(shape[3])
-    return coords[-2]
+    coords = get_all_x_y_coords(canvas, shape)
+    return max(coords[2])
 
 
 def get_bottom_y(canvas, shape):
-    coords = canvas.coords(shape[3])
-    return coords[-1]
+    coords = get_all_x_y_coords(canvas, shape)
+    return max(coords[3])
 
 
 # Creates a shape
 def make_randomized_shape(canvas):
-    num = random.randint(6, 7)
+    num = random.randint(1, 7)
     if num == 1:
         return make_z_shape(canvas)
     elif num == 2:
@@ -138,109 +237,78 @@ def make_randomized_shape(canvas):
     elif num == 3:
         return make_t_shape(canvas)
     elif num == 4:
-        return make_r_el_shape(canvas)
+        return make_l_shape(canvas)
     elif num == 5:
-        return make_el_shape(canvas)
+        return make_j_shape(canvas)
     elif num == 6:
         return make_long_rect(canvas)
     elif num == 7:
         return make_square_shape(canvas)
 
 
-def make_z_shape(canvas):  # 16 points
-    shape_start = CANVAS_WIDTH / 2 - UNIT_SIZE
-    points = [
-        [shape_start, 0],
-        [shape_start + 2 * UNIT_SIZE, 0],
-        [shape_start + 2 * UNIT_SIZE, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 3, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 3, + UNIT_SIZE * 2],
-        [shape_start + UNIT_SIZE, UNIT_SIZE * 2],
-        [shape_start + UNIT_SIZE, UNIT_SIZE],
-        [shape_start, UNIT_SIZE],
-    ]
+def make_z_shape(canvas): 
+    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_8_POINTS, 'blue')
 
-    return canvas.create_polygon(points, outline='black', fill='aqua')
+    return [block1, block2, block3, block4]
 
 
-def make_s_shape(canvas):  # 16 points
-    shape_start = CANVAS_WIDTH / 2 - UNIT_SIZE
-    points = [
-        [shape_start, UNIT_SIZE],
-        [shape_start + UNIT_SIZE, UNIT_SIZE],
-        [shape_start + UNIT_SIZE, 0],
-        [shape_start + UNIT_SIZE * 3, 0],
-        [shape_start + UNIT_SIZE * 3, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 2, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 2, UNIT_SIZE * 2],
-        [shape_start, UNIT_SIZE * 2],
-    ]
+def make_s_shape(canvas):
+    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_5_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
 
-    return canvas.create_polygon(points, outline='black', fill='yellow')
+    return [block1, block2, block3, block4]
 
 
-def make_t_shape(canvas):  # 16 points
-    shape_start = CANVAS_WIDTH / 2 - UNIT_SIZE
-    points = [
-        [shape_start, UNIT_SIZE],
-        [shape_start + UNIT_SIZE, UNIT_SIZE], 
-        [shape_start + UNIT_SIZE, 0],
-        [shape_start + UNIT_SIZE * 2, 0],
-        [shape_start + UNIT_SIZE * 2, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 3, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 3, UNIT_SIZE * 2],
-        [shape_start, UNIT_SIZE * 2],
-    ]
+def make_t_shape(canvas):
+    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_5_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
 
-    return canvas.create_polygon(points, outline='black', fill='orange')
+    return [block1, block2, block3, block4]
 
 
-def make_r_el_shape(canvas):  # 12 points
-    shape_start = CANVAS_WIDTH / 2 - UNIT_SIZE
-    points = [
-        [shape_start, 0],
-        [shape_start + UNIT_SIZE, 0],
-        [shape_start + UNIT_SIZE, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 3, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 3, UNIT_SIZE * 2],
-        [shape_start, UNIT_SIZE * 2],
-    ]
+def make_l_shape(canvas):
+    block1 = make_unit_block(canvas, BLOCK_4_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_8_POINTS, 'blue')
 
-    return canvas.create_polygon(points, outline='black', fill='blue')
+    return [block1, block2, block3, block4]
 
 
-def make_el_shape(canvas):  # 12 points
-    shape_start = CANVAS_WIDTH / 2 - UNIT_SIZE
-    points = [
-        [shape_start, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 2, UNIT_SIZE],
-        [shape_start + UNIT_SIZE * 2, 0],
-        [shape_start + UNIT_SIZE * 3, 0],
-        [shape_start + UNIT_SIZE * 3, UNIT_SIZE * 2],
-        [shape_start, UNIT_SIZE * 2],
-    ]
+def make_j_shape(canvas):
+    block1 = make_unit_block(canvas, BLOCK_1_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_5_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
 
-    return canvas.create_polygon(points, outline='black', fill='green')
+    return [block1, block2, block3, block4]
 
 
 def make_long_rect(canvas):
-    top_left = make_unit_block(canvas, BLOCK_1_POINTS, 'blue')
-    top_right = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
-    bottom_left = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
-    bottom_right = make_unit_block(canvas, BLOCK_4_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_1_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_4_POINTS, 'blue')
 
-    return [top_left, top_right, bottom_left, bottom_right]
+    return [block1, block2, block3, block4]
 
 
 def make_square_shape(canvas):
-    top_left = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
-    top_right = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
-    bottom_left = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
-    bottom_right = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
 
-    return [top_left, top_right, bottom_left, bottom_right]
+    return [block1, block2, block3, block4]
 
-    
+
 def make_unit_block(canvas, block, color):
     return canvas.create_rectangle(block[0], block[1], block[2], block[3], outline='grey95', fill=color, tags='shape')
 
@@ -271,16 +339,16 @@ def key_pressed(event, canvas, shape):
     This was written with the help of Code In Place Section Leader
     """
     sym = event.keysym.lower()
-    if sym == "left" and get_left_x(canvas, shape) >= 0 + UNIT_SIZE:
+    if sym == "left" and get_left_x(canvas, shape) >= 0 + UNIT_SIZE and not objects_left(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], -UNIT_SIZE, 0)
-    elif sym == "right" and get_right_x(canvas, shape) <= CANVAS_WIDTH - UNIT_SIZE:
+    elif sym == "right" and get_right_x(canvas, shape) <= CANVAS_WIDTH - UNIT_SIZE and not objects_right(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], UNIT_SIZE, 0)
     elif sym == "up":
         #rotate(canvas, shape)
         pass
-    elif sym == "down" and get_bottom_y(canvas, shape) <= CANVAS_HEIGHT - UNIT_SIZE:
+    elif sym == "down" and get_bottom_y(canvas, shape) <= CANVAS_HEIGHT - UNIT_SIZE and not hit_objects(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], 0, UNIT_SIZE)
 
