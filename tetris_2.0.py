@@ -7,6 +7,7 @@ File: tetris_2.0.py
 import tkinter
 import random
 import time
+import math
 
 
 # Constants for canvas
@@ -29,34 +30,31 @@ BLOCK_7_POINTS = [CANVAS_MID, UNIT_SIZE, CANVAS_MID + UNIT_SIZE, UNIT_SIZE * 2]
 BLOCK_8_POINTS = [CANVAS_MID + UNIT_SIZE, UNIT_SIZE, CANVAS_MID + UNIT_SIZE * 2, UNIT_SIZE * 2]
 
 
-def main():
-    canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'Simplified Tetris')
-    draw_grid(canvas)
- 
-    while True:
-        play_shape(canvas)
-        
-    canvas.mainloop()
-    
 
-def own_shape(canvas, shape, object_num):
+
+
+def is_self(canvas, shape, object_num):
+    """
+    This function detects if an object number is itself.
+    Note: each shape is made of 4 squares, each with its own object number
+    """
     if object_num < shape[0] or object_num > shape[3]:
         return False
     return True
 
 
-def hit_objects(canvas, shape):
-    coords = get_shape_coords(canvas, shape)
-    neighbors = []
-    for coord in coords:
-        x1, y1, x2, y2 = coord[0], coord[1], coord[2], coord[3]
-        neighbors.append(canvas.find_overlapping(x1, y1, x2, y2))
+# def hit_objects(canvas, shape):
+#     coords = get_shape_coords(canvas, shape)
+#     neighbors = []
+#     for coord in coords:
+#         x1, y1, x2, y2 = coord[0], coord[1], coord[2], coord[3]
+#         neighbors.append(canvas.find_overlapping(x1, y1, x2, y2))
 
-    for neighbor in neighbors:
-        for item in neighbor:
-            if item > 28 and not own_shape(canvas, shape, item):
-                return True
-    return False
+#     for neighbor in neighbors:
+#         for item in neighbor:
+#             if item > 28 and not is_self(canvas, shape, item):
+#                 return True
+#     return False
 
 
 def objects_left(canvas, shape):
@@ -69,7 +67,7 @@ def objects_left(canvas, shape):
         coord_top_y = canvas.find_overlapping(x1, y1, x2, y1)
 
         for neighbor in coord_left_x:
-            if neighbor > 28 and not own_shape(canvas, shape, neighbor):
+            if neighbor > 28 and not is_self(canvas, shape, neighbor):
                 if neighbor in coord_top_y and neighbor in coord_bottom_y:
                     return True
     return False
@@ -86,7 +84,7 @@ def objects_right(canvas, shape):
         coord_top_y = canvas.find_overlapping(x1, y1, x2, y1)
 
         for neighbor in coord_right_x:
-            if neighbor > 28 and not own_shape(canvas, shape, neighbor):
+            if neighbor > 28 and not is_self(canvas, shape, neighbor):
                 if neighbor in coord_top_y and neighbor in coord_bottom_y:
                     return True
     return False
@@ -101,30 +99,18 @@ def objects_below(canvas, shape):
         coord_left_x = canvas.find_overlapping(x1, y1, x1, y2)
 
         for neighbor in coord_y:
-            if neighbor > 28 and not own_shape(canvas, shape, neighbor):
+            if neighbor > 28 and not is_self(canvas, shape, neighbor):
                 if neighbor in coord_right_x and neighbor in coord_left_x:
                     return True
     return False
 
 
-def get_shape_coords_dict(canvas, shape):
-    shape_coords = {}
-    for tetra in shape:
-        shape_coords[tetra] = canvas.coords(tetra)
-    print(shape_coords)
-
-
 def get_shape_coords(canvas, shape):
+    """ Gets the coordinates of all the squares as a list of lists """
     shape_coords = []
     for tetra in shape:
         shape_coords.append(canvas.coords(tetra))
     return shape_coords
-
-
-# def rotate(canvas, shape):
-#     canvas.move(shape[0], UNIT_SIZE * 2, -UNIT_SIZE * 2)
-#     canvas.move(shape[1], UNIT_SIZE * 1, -UNIT_SIZE * 1)
-#     canvas.move(shape[3], UNIT_SIZE * -1, -UNIT_SIZE * -1)
 
 
 # Plays one shape until shape is placed
@@ -192,7 +178,7 @@ def get_bottom_y(canvas, shape):
     return max(coords[3])
 
 
-# Creates a shape
+
 def make_randomized_shape(canvas):
     num = random.randint(1, 7)
     if num == 1:
@@ -211,7 +197,8 @@ def make_randomized_shape(canvas):
         return make_square_shape(canvas)
 
 
-def make_z_shape(canvas): 
+# Create shape methods
+def make_z_shape(canvas):
     block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
     block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
     block3 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
@@ -275,10 +262,9 @@ def make_square_shape(canvas):
 
 
 def make_unit_block(canvas, block, color):
-    return canvas.create_rectangle(block[0], block[1], block[2], block[3], outline='grey95', fill=color, tags='shape')
+    return canvas.create_rectangle(block[0], block[1], block[2], block[3], outline='grey30', fill=color, tags='shape')
 
 
-# DO NOT MODIFY - Creates and returns a drawing canvas
 def make_canvas(width, height, title):
     """
     Create a canvas with specified dimension
@@ -311,11 +297,20 @@ def key_pressed(event, canvas, shape):
         for i in range(4):
             canvas.move(shape[i], UNIT_SIZE, 0)
     elif sym == "up":
-        #rotate(canvas, shape)
         pass
-    elif sym == "down" and get_bottom_y(canvas, shape) <= CANVAS_HEIGHT - UNIT_SIZE and not hit_objects(canvas, shape):
+    elif sym == "down" and get_bottom_y(canvas, shape) <= CANVAS_HEIGHT - UNIT_SIZE and not objects_below(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], 0, UNIT_SIZE)
+
+
+def main():
+    canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'Simplified Tetris')
+    draw_grid(canvas)
+
+    while True:
+        play_shape(canvas)
+
+    canvas.mainloop()
 
 
 if __name__ == '__main__':
