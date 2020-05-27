@@ -30,9 +30,6 @@ BLOCK_7_POINTS = [CANVAS_MID, UNIT_SIZE, CANVAS_MID + UNIT_SIZE, UNIT_SIZE * 2]
 BLOCK_8_POINTS = [CANVAS_MID + UNIT_SIZE, UNIT_SIZE, CANVAS_MID + UNIT_SIZE * 2, UNIT_SIZE * 2]
 
 
-
-
-
 def is_self(canvas, shape, object_num):
     """
     This function detects if an object number is itself.
@@ -41,20 +38,6 @@ def is_self(canvas, shape, object_num):
     if object_num < shape[0] or object_num > shape[3]:
         return False
     return True
-
-
-# def hit_objects(canvas, shape):
-#     coords = get_shape_coords(canvas, shape)
-#     neighbors = []
-#     for coord in coords:
-#         x1, y1, x2, y2 = coord[0], coord[1], coord[2], coord[3]
-#         neighbors.append(canvas.find_overlapping(x1, y1, x2, y2))
-
-#     for neighbor in neighbors:
-#         for item in neighbor:
-#             if item > 28 and not is_self(canvas, shape, item):
-#                 return True
-#     return False
 
 
 def objects_left(canvas, shape):
@@ -71,7 +54,6 @@ def objects_left(canvas, shape):
                 if neighbor in coord_top_y and neighbor in coord_bottom_y:
                     return True
     return False
-
 
 
 def objects_right(canvas, shape):
@@ -103,31 +85,6 @@ def objects_below(canvas, shape):
                 if neighbor in coord_right_x and neighbor in coord_left_x:
                     return True
     return False
-
-
-def get_shape_coords(canvas, shape):
-    """ Gets the coordinates of all the squares as a list of lists """
-    shape_coords = []
-    for tetra in shape:
-        shape_coords.append(canvas.coords(tetra))
-    return shape_coords
-
-
-# Plays one shape until shape is placed
-def play_shape(canvas):
-    shape = make_randomized_shape(canvas)
-    canvas.bind("<Key>", lambda event: key_pressed(event, canvas, shape))
-    canvas.focus_set()  # Canvas now has the keyboard focus
-    make_shape_fall(canvas, shape)
-    return shape
-
-
-def make_shape_fall(canvas, shape):
-    while not is_touching_bottom(canvas, shape) and not objects_below(canvas, shape):
-        for i in range(4):
-            canvas.move(shape[i], 0, Y_SPEED)
-        canvas.update()
-        time.sleep(1/2)
 
 
 def is_touching_bottom(canvas, shape):
@@ -178,7 +135,6 @@ def get_bottom_y(canvas, shape):
     return max(coords[3])
 
 
-
 def make_randomized_shape(canvas):
     num = random.randint(1, 7)
     if num == 1:
@@ -199,19 +155,19 @@ def make_randomized_shape(canvas):
 
 # Create shape methods
 def make_z_shape(canvas):
-    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_8_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_1_POINTS, 'blue')
 
     return [block1, block2, block3, block4]
 
 
 def make_s_shape(canvas):
-    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_5_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
+    block3 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_4_POINTS, 'blue')
 
     return [block1, block2, block3, block4]
 
@@ -227,9 +183,9 @@ def make_t_shape(canvas):
 
 def make_l_shape(canvas):
     block1 = make_unit_block(canvas, BLOCK_4_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block2 = make_unit_block(canvas, BLOCK_8_POINTS, 'blue')
     block3 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_8_POINTS, 'blue')
+    block4 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
 
     return [block1, block2, block3, block4]
 
@@ -284,6 +240,30 @@ def draw_grid(canvas):
         canvas.create_line(0, i, 500, i, fill='grey95')
 
 
+def rotate(canvas, shape):
+    pivot = (get_shape_coords(canvas, shape)[2])  # Get the coord for the 3rd tetra
+    px1 = pivot[0]
+    py1 = pivot[1]
+    px2 = pivot[2]
+    py2 = pivot[3]
+    lst = shape.copy()
+    lst.pop(2)
+    for block in lst:
+        coord = canvas.coords(block)
+        bx1 = coord[0]
+        by1 = coord[1]
+        bx2 = coord[2]
+        by2 = coord[3]
+        
+        x_diff = bx1 - px1
+        y_diff = by1 - py1
+
+        x_move = -x_diff - y_diff
+        y_move = x_diff - y_diff
+
+        canvas.move(block, x_move, y_move)
+
+
 def key_pressed(event, canvas, shape):
     """
     Respond to different arrow keys
@@ -297,10 +277,35 @@ def key_pressed(event, canvas, shape):
         for i in range(4):
             canvas.move(shape[i], UNIT_SIZE, 0)
     elif sym == "up":
-        pass
+        rotate(canvas, shape)
     elif sym == "down" and get_bottom_y(canvas, shape) <= CANVAS_HEIGHT - UNIT_SIZE and not objects_below(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], 0, UNIT_SIZE)
+
+
+def get_shape_coords(canvas, shape):
+    """ Gets the coordinates of all the squares as a list of lists """
+    shape_coords = []
+    for tetra in shape:
+        shape_coords.append(canvas.coords(tetra))
+    return shape_coords
+
+
+def play_shape(canvas):
+    """ Plays one shape until shape is placed """
+    shape = make_randomized_shape(canvas)
+    canvas.bind("<Key>", lambda event: key_pressed(event, canvas, shape))
+    canvas.focus_set()  # Canvas now has the keyboard focus
+    make_shape_fall(canvas, shape)
+    return shape
+
+
+def make_shape_fall(canvas, shape):
+    while not is_touching_bottom(canvas, shape) and not objects_below(canvas, shape):
+        for i in range(4):
+            canvas.move(shape[i], 0, Y_SPEED)
+        canvas.update()
+        time.sleep(1/2)
 
 
 def main():
