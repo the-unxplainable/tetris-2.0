@@ -17,6 +17,7 @@ CANVAS_MID = CANVAS_WIDTH // 2
 UNIT_SIZE = 50          # Size of unit block within shape
 Y_SPEED = 50
 X_SPEED = 50
+DELAY = 1/4
 
 
 # Vertices for individual squares
@@ -50,7 +51,7 @@ def objects_left(canvas, shape):
         coord_top_y = canvas.find_overlapping(x1, y1, x2, y1)
 
         for neighbor in coord_left_x:
-            if neighbor > 28 and not is_self(canvas, shape, neighbor):
+            if neighbor > 30 and not is_self(canvas, shape, neighbor):
                 if neighbor in coord_top_y and neighbor in coord_bottom_y:
                     return True
     return False
@@ -66,7 +67,7 @@ def objects_right(canvas, shape):
         coord_top_y = canvas.find_overlapping(x1, y1, x2, y1)
 
         for neighbor in coord_right_x:
-            if neighbor > 28 and not is_self(canvas, shape, neighbor):
+            if neighbor > 30 and not is_self(canvas, shape, neighbor):
                 if neighbor in coord_top_y and neighbor in coord_bottom_y:
                     return True
     return False
@@ -81,7 +82,7 @@ def objects_below(canvas, shape):
         coord_left_x = canvas.find_overlapping(x1, y1, x1, y2)
 
         for neighbor in coord_y:
-            if neighbor > 28 and not is_self(canvas, shape, neighbor):
+            if neighbor > 30 and not is_self(canvas, shape, neighbor):
                 if neighbor in coord_right_x and neighbor in coord_left_x:
                     return True
     return False
@@ -234,20 +235,61 @@ def make_canvas(width, height, title):
 
 
 def draw_grid(canvas):
+    for i in range(0, 1001, 50):
+        canvas.create_line(0, i, 500, i, fill='grey95')
     for i in range(50, 500, 50):
         canvas.create_line(i, 0, i, 1000, fill='grey95')
-    for i in range(50, 1000, 50):
-        canvas.create_line(0, i, 500, i, fill='grey95')
+
+
+def all_boxes(canvas):
+    all_boxes = []
+    all_objects = canvas.find_all()
+    for thing in objects:
+        if thing > 30:
+            all_boxes.append(thing)
+    return all_boxes
+
+
+def remove_completed_row(canvas):
+
+    for y in range(-1, 950, 50):
+        overlap = canvas.find_enclosed(-1, y, CANVAS_WIDTH + 1, y + 52)
+        if len(overlap) > 11:
+            for item in overlap:
+                if item > 30:
+                    canvas.delete(item)
+            blocks_above_line = canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, overlap[0] * UNIT_SIZE)
+            time.sleep(1/5)
+            for block in blocks_above_line:
+                if block > 30:
+                    canvas.move(block, 0, UNIT_SIZE)
+    
 
 
 def rotate(canvas, shape):
-    pivot = (get_shape_coords(canvas, shape)[2])  # Get the coord for the 3rd tetra
+    """
+    Pivot = Obtain the coordinates for the block that will not be moving
+    All the other blocks will move around this block
+    In this game, this block will always be the third block in 'shape'
+    """
+    pivot = (get_shape_coords(canvas, shape)[2])
     px1 = pivot[0]
     py1 = pivot[1]
     px2 = pivot[2]
     py2 = pivot[3]
     lst = shape.copy()
     lst.pop(2)
+
+    # Something to add to not rotate a square
+    overlap = canvas.find_overlapping(px2, py1, px2, py1)
+    count = 0
+    for item in overlap:
+        if item > 30:
+            count += 1
+    if count == 4:
+        return
+
+
     for block in lst:
         coord = canvas.coords(block)
         bx1 = coord[0]
@@ -258,8 +300,8 @@ def rotate(canvas, shape):
         x_diff = bx1 - px1
         y_diff = by1 - py1
 
-        x_move = -x_diff - y_diff
-        y_move = x_diff - y_diff
+        x_move = -x_diff + y_diff
+        y_move = -x_diff - y_diff
 
         canvas.move(block, x_move, y_move)
 
@@ -305,7 +347,7 @@ def make_shape_fall(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], 0, Y_SPEED)
         canvas.update()
-        time.sleep(1/2)
+        time.sleep(DELAY)
 
 
 def main():
@@ -314,6 +356,7 @@ def main():
 
     while True:
         play_shape(canvas)
+        remove_completed_row(canvas)
 
     canvas.mainloop()
 
