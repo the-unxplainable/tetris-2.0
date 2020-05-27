@@ -8,7 +8,6 @@ import tkinter
 import random
 import time
 
-"test"
 
 # Constants for canvas
 CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
@@ -93,7 +92,6 @@ def objects_right(canvas, shape):
     return False
 
 
-
 def objects_below(canvas, shape):
     coords = get_shape_coords(canvas, shape)
     for coord in coords:
@@ -109,11 +107,6 @@ def objects_below(canvas, shape):
     return False
 
 
-    # find the bottom y of each shape
-    # using canvas.coords, determine if this y matches the top y of an object
-    # and the X is x1 difference
-    # so if 
-
 def get_shape_coords_dict(canvas, shape):
     shape_coords = {}
     for tetra in shape:
@@ -126,34 +119,6 @@ def get_shape_coords(canvas, shape):
     for tetra in shape:
         shape_coords.append(canvas.coords(tetra))
     return shape_coords
-
-
-    
-    """
-    overlap = set(canvas.find_overlapping(
-        (coords[0] + coords[2]) / 2 + x, 
-        (coords[1] + coords[3]) / 2 + y, 
-        (coords[0] + coords[2]) / 2 + x,
-        (coords[1] + coords[3]) / 2 + y
-            ))
-    """
-    # x1, y1, x2, y2 = canvas.coords(shape[0])
-    # x3, y3, x4, y4 = canvas.coords(shape[1])
-    # x5, y5, x6, y6 = canvas.coords(shape[2])
-    # x7, y7, x8, y8 = canvas.coords(shape[3])
-
-    # colliding_list = canvas.find_overlapping(y2, y4, y6, y8)
-    # #(canvas.find_overlapping(x3, y3, x4, y4)), (canvas.find_overlapping(x5, y5, x6, y6)), (canvas.find_overlapping(x7, y7, x8, y8))
-    # print(colliding_list)
-
-    # count = 0
-    # for el in colliding_list:
-    #     if el not in shape and el >= 29:
-    #         count += 1
-    # if count >= 2:
-    #     return True
-    # else:
-    #     return False
 
 
 # def rotate(canvas, shape):
