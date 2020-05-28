@@ -23,7 +23,8 @@ import tkinter
 import random
 import time
 import math
-from playsound import playsound
+from soundplay import soundplay
+soundplay("tetris_theme_song.mp3")
 
 # Constants for canvas
 CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
