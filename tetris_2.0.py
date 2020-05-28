@@ -7,14 +7,16 @@ Functionalities include:
 - Tetromnios can rotate
 - Completed lines disappear
 - Detects end of game
+- Hard drop with space bar (technically it is just falling super fast)
 
 TODO: Show score
 TODO: Show preview (spawn shape above the canvas, move once previous shape is placed)
-TODO: Slam pieces down
 TODO: Legal move for rotating pieces
 TODO: Could I make the line flash before it disappears?
 TODO: Decompose objects_left, objects_right, objects_below
 TODO: Add music: playsound('/path/to/a/sound/file/you/want/to/play.mp3', block=False)
+TODO: Create multiple levels?
+TODO: Create levels with blocks in the way
 """
 
 import tkinter
