@@ -4,7 +4,7 @@ File: tetris_2.0.py
 
 My second attempt at tetris using Python and Tkinter.
 Functionalities include:
-- Tetromnios can rotate
+- Tetrominos can rotate
 - Completed lines disappear
 - Detects end of game
 - Hard drop with space bar (technically it is just falling super fast)
@@ -23,8 +23,8 @@ import tkinter
 import random
 import time
 import math
-from soundplay import soundplay
-soundplay("tetris_theme_song.mp3")
+# from soundplay import soundplay
+# soundplay("tetris_theme_song.mp3")
 
 # Constants for canvas
 CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
@@ -251,9 +251,9 @@ def make_canvas(width, height, title):
 
 
 def draw_grid(canvas):
-    for i in range(0, 1001, 50):
-        canvas.create_line(0, i, 500, i, fill='grey10')
-    for i in range(50, 500, 50):
+    for i in range(0, CANVAS_HEIGHT + 1, UNIT_SIZE):
+        canvas.create_line(0, i, CANVAS_WIDTH, i, fill='grey10')
+    for i in range(UNIT_SIZE, CANVAS_WIDTH, UNIT_SIZE):
         canvas.create_line(i, 0, i, 1000, fill='grey10')
 
 
@@ -268,7 +268,7 @@ def all_boxes(canvas):
 
 def remove_completed_row(canvas):
 
-    for y in range(-1, 950, 50):
+    for y in range(-1, CANVAS_HEIGHT - UNIT_SIZE, UNIT_SIZE):
         overlap = canvas.find_enclosed(-1, y, CANVAS_WIDTH + 1, y + 52)
         if len(overlap) > 11:
             for item in overlap:
