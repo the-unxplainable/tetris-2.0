@@ -12,17 +12,16 @@ TODO: Show score
 TODO: Show preview (spawn shape above the canvas, move once previous shape is placed)
 TODO: Slam pieces down
 TODO: Legal move for rotating pieces
-TODO: Update colors
 TODO: Could I make the line flash before it disappears?
 TODO: Decompose objects_left, objects_right, objects_below
-TODO: Add music
+TODO: Add music: playsound('/path/to/a/sound/file/you/want/to/play.mp3', block=False)
 """
 
 import tkinter
 import random
 import time
 import math
-
+from playsound import playsound
 
 # Constants for canvas
 CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
@@ -373,6 +372,7 @@ def main():
         play_shape(canvas)
         remove_completed_row(canvas)
 
+    canvas.create_text(40, 500, anchor='w', font='Times 40 bold', text='GAME OVER!', fill='white')
     canvas.mainloop()
 
 
