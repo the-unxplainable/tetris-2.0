@@ -8,6 +8,7 @@ Functionalities include:
 - Completed lines disappear
 - Detects end of game
 - Hard drop with space bar (technically it is just falling super fast)
+- Tetris song if soundplay module is installed
 
 TODO: Show score
 TODO: Show preview (spawn shape above the canvas, move once previous shape is placed)
