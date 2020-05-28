@@ -2,6 +2,20 @@
 File: tetris_2.0.py
 ----------------
 
+My second attempt at tetris using Python and Tkinter.
+Functionalities include:
+- Tetromnios can rotate
+- Completed lines disappear
+- Detects end of game
+
+TODO: Show score
+TODO: Show preview (spawn shape above the canvas, move once previous shape is placed)
+TODO: Slam pieces down
+TODO: Legal move for rotating pieces
+TODO: Update colors
+TODO: Could I make the line flash before it disappears?
+TODO: Decompose objects_left, objects_right, objects_below
+TODO: Add music
 """
 
 import tkinter
@@ -21,14 +35,14 @@ DELAY = 1/4
 
 
 # Vertices for individual squares
-BLOCK_1_POINTS = [CANVAS_MID - UNIT_SIZE * 2, 0, CANVAS_MID - UNIT_SIZE, UNIT_SIZE]
-BLOCK_2_POINTS = [CANVAS_MID - UNIT_SIZE, 0, CANVAS_MID, UNIT_SIZE]
-BLOCK_3_POINTS = [CANVAS_MID, 0, CANVAS_MID + UNIT_SIZE, UNIT_SIZE]
-BLOCK_4_POINTS = [CANVAS_MID + UNIT_SIZE, 0, CANVAS_MID + UNIT_SIZE * 2, UNIT_SIZE]
-BLOCK_5_POINTS = [CANVAS_MID - UNIT_SIZE * 2, UNIT_SIZE, CANVAS_MID - UNIT_SIZE, UNIT_SIZE * 2]
-BLOCK_6_POINTS = [CANVAS_MID - UNIT_SIZE, UNIT_SIZE, CANVAS_MID, UNIT_SIZE * 2]
-BLOCK_7_POINTS = [CANVAS_MID, UNIT_SIZE, CANVAS_MID + UNIT_SIZE, UNIT_SIZE * 2]
-BLOCK_8_POINTS = [CANVAS_MID + UNIT_SIZE, UNIT_SIZE, CANVAS_MID + UNIT_SIZE * 2, UNIT_SIZE * 2]
+BLOCK_1_POINTS = [CANVAS_MID - UNIT_SIZE * 2, -UNIT_SIZE * 2, CANVAS_MID - UNIT_SIZE, -UNIT_SIZE]
+BLOCK_2_POINTS = [CANVAS_MID - UNIT_SIZE, -UNIT_SIZE * 2, CANVAS_MID, -UNIT_SIZE]
+BLOCK_3_POINTS = [CANVAS_MID, -UNIT_SIZE * 2, CANVAS_MID + UNIT_SIZE, -UNIT_SIZE]
+BLOCK_4_POINTS = [CANVAS_MID + UNIT_SIZE, -UNIT_SIZE * 2, CANVAS_MID + UNIT_SIZE * 2, -UNIT_SIZE]
+BLOCK_5_POINTS = [CANVAS_MID - UNIT_SIZE * 2, -UNIT_SIZE, CANVAS_MID - UNIT_SIZE, 0]
+BLOCK_6_POINTS = [CANVAS_MID - UNIT_SIZE, -UNIT_SIZE, CANVAS_MID, 0]
+BLOCK_7_POINTS = [CANVAS_MID, -UNIT_SIZE, CANVAS_MID + UNIT_SIZE, 0]
+BLOCK_8_POINTS = [CANVAS_MID + UNIT_SIZE, -UNIT_SIZE, CANVAS_MID + UNIT_SIZE * 2, 0]
 
 
 def is_self(canvas, shape, object_num):
@@ -156,37 +170,37 @@ def make_randomized_shape(canvas):
 
 # Create shape methods
 def make_z_shape(canvas):
-    block1 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_1_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_7_POINTS, 'red')
+    block2 = make_unit_block(canvas, BLOCK_6_POINTS, 'red')
+    block3 = make_unit_block(canvas, BLOCK_2_POINTS, 'red')
+    block4 = make_unit_block(canvas, BLOCK_1_POINTS, 'red')
 
     return [block1, block2, block3, block4]
 
 
 def make_s_shape(canvas):
-    block1 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_4_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_5_POINTS, 'green')
+    block2 = make_unit_block(canvas, BLOCK_6_POINTS, 'green')
+    block3 = make_unit_block(canvas, BLOCK_2_POINTS, 'green')
+    block4 = make_unit_block(canvas, BLOCK_3_POINTS, 'green')
 
     return [block1, block2, block3, block4]
 
 
 def make_t_shape(canvas):
-    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_5_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'purple')
+    block2 = make_unit_block(canvas, BLOCK_5_POINTS, 'purple')
+    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'purple')
+    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'purple')
 
     return [block1, block2, block3, block4]
 
 
 def make_l_shape(canvas):
-    block1 = make_unit_block(canvas, BLOCK_4_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_8_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_3_POINTS, 'orange')
+    block2 = make_unit_block(canvas, BLOCK_7_POINTS, 'orange')
+    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'orange')
+    block4 = make_unit_block(canvas, BLOCK_5_POINTS, 'orange')
 
     return [block1, block2, block3, block4]
 
@@ -201,19 +215,19 @@ def make_j_shape(canvas):
 
 
 def make_long_rect(canvas):
-    block1 = make_unit_block(canvas, BLOCK_1_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_4_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_1_POINTS, 'cyan')
+    block2 = make_unit_block(canvas, BLOCK_2_POINTS, 'cyan')
+    block3 = make_unit_block(canvas, BLOCK_3_POINTS, 'cyan')
+    block4 = make_unit_block(canvas, BLOCK_4_POINTS, 'cyan')
 
     return [block1, block2, block3, block4]
 
 
 def make_square_shape(canvas):
-    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
+    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'yellow')
+    block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'yellow')
+    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'yellow')
+    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'yellow')
 
     return [block1, block2, block3, block4]
 
@@ -229,16 +243,16 @@ def make_canvas(width, height, title):
     top = tkinter.Tk()
     top.minsize(width=width, height=height)
     top.title(title)
-    canvas = tkinter.Canvas(top, width=width + 1, height=height + 1)
+    canvas = tkinter.Canvas(top, width=width + 1, height=height + 1, bg='black')
     canvas.pack()
     return canvas
 
 
 def draw_grid(canvas):
     for i in range(0, 1001, 50):
-        canvas.create_line(0, i, 500, i, fill='grey95')
+        canvas.create_line(0, i, 500, i, fill='grey10')
     for i in range(50, 500, 50):
-        canvas.create_line(i, 0, i, 1000, fill='grey95')
+        canvas.create_line(i, 0, i, 1000, fill='grey10')
 
 
 def all_boxes(canvas):
@@ -265,7 +279,6 @@ def remove_completed_row(canvas):
                     canvas.move(block, 0, UNIT_SIZE)
     
 
-
 def rotate(canvas, shape):
     """
     Pivot = Obtain the coordinates for the block that will not be moving
@@ -288,7 +301,6 @@ def rotate(canvas, shape):
             count += 1
     if count == 4:
         return
-
 
     for block in lst:
         coord = canvas.coords(block)
@@ -350,11 +362,14 @@ def make_shape_fall(canvas, shape):
         time.sleep(DELAY)
 
 
-def main():
-    canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'Simplified Tetris')
-    draw_grid(canvas)
+def game_over(canvas):
+    return len(canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, UNIT_SIZE + 1)) > 2
 
-    while True:
+
+def main():
+    canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'Tetris 2.0')
+    draw_grid(canvas)
+    while not game_over(canvas):
         play_shape(canvas)
         remove_completed_row(canvas)
 
