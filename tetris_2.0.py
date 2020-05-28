@@ -334,6 +334,12 @@ def key_pressed(event, canvas, shape):
     elif sym == "down" and get_bottom_y(canvas, shape) <= CANVAS_HEIGHT - UNIT_SIZE and not objects_below(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], 0, UNIT_SIZE)
+    elif sym == "space":
+        while not is_touching_bottom(canvas, shape) and not objects_below(canvas, shape):
+            for i in range(4):
+                canvas.move(shape[i], 0, Y_SPEED)
+            canvas.update()
+            time.sleep(1/3000)
 
 
 def get_shape_coords(canvas, shape):
