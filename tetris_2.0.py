@@ -36,7 +36,8 @@ Y_SPEED = 50
 X_SPEED = 50
 
 
-# Vertices for individual squares
+# Vertices for individual squares, created above the canvas, o and l are spawned in middle
+# The rest of the shapes are spawned middle left
 BLOCK_1_POINTS = [CANVAS_MID - UNIT_SIZE * 2, -UNIT_SIZE * 2, CANVAS_MID - UNIT_SIZE, -UNIT_SIZE]
 BLOCK_2_POINTS = [CANVAS_MID - UNIT_SIZE, -UNIT_SIZE * 2, CANVAS_MID, -UNIT_SIZE]
 BLOCK_3_POINTS = [CANVAS_MID, -UNIT_SIZE * 2, CANVAS_MID + UNIT_SIZE, -UNIT_SIZE]
@@ -344,7 +345,7 @@ def key_pressed(event, canvas, shape):
             for i in range(4):
                 canvas.move(shape[i], 0, Y_SPEED)
             canvas.update()
-            time.sleep(1/3000)
+            time.sleep(1/1000)
 
 
 def get_shape_coords(canvas, shape):
@@ -392,8 +393,8 @@ def get_score(lines_removed, level):
 def display_game_over(canvas, level, total_score):
     canvas.create_rectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, fill="grey50", stipple="gray50")
     canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 3, font='Times 40 bold', text='GAME OVER!', fill='white')
-    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 2, font='Times 40 bold', text=f"You reached level {level}!", fill='white')
-    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 3, font='Times 40 bold', text=f"Your score: {total_score}", fill = 'white')
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 2, font='Times 25 bold', text=f"You reached level {level}!", fill='white')
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 3, font='Times 25 bold', text=f"Your score: {total_score}", fill = 'white')
 
 
 def main():
@@ -415,8 +416,6 @@ def main():
 
         canvas.delete(level_label)
         level_label = canvas.create_text(CANVAS_WIDTH - 20, 20, anchor='e', fill='white', font='Times 14', text=f"Level: {level}")
-
-        print("score: ", total_score, "level: ", level, "total_lines: ", total_lines)
 
     display_game_over(canvas, level, total_score)
     canvas.mainloop()
