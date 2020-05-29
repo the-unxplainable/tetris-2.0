@@ -8,10 +8,9 @@ Functionalities include:
 - Completed lines disappear
 - Detects end of game
 - Hard drop with space bar (technically it is just falling super fast)
+- Advancing levels increases fall speed
+- Displays score and level during game play
 - Tetris song if soundplay module is installed
-- Calculates score, displays when game is over
-- Calculates the level, displays when game is over
-- Adding level increases drop speed
 
 TODO: Show preview (spawn shape above the canvas, move once previous shape is placed)
 TODO: Legal move for rotating pieces
@@ -35,7 +34,6 @@ CANVAS_MID = CANVAS_WIDTH // 2
 UNIT_SIZE = 50          # Size of unit block within shape
 Y_SPEED = 50
 X_SPEED = 50
-DELAY = 1/4
 
 
 # Vertices for individual squares
@@ -375,41 +373,52 @@ def make_shape_fall(canvas, shape, level):
 
 
 def game_over(canvas):
-    return len(canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, UNIT_SIZE + 1)) > 2
+    return len(canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, UNIT_SIZE + 1)) > 4
 
 
 def get_score(lines_removed, level):
     update_score = 0
     if lines_removed == 1:
-        update_score += 40 * level
+        update_score += 40 * (level + 1)
     elif lines_removed == 2:
-        update_score += 100 * level
+        update_score += 100 * (level + 1)
     elif lines_removed == 3:
-        update_score += 300 * level
+        update_score += 300 * (level + 1)
     elif lines_removed == 4:
-        update_score += 1200 * level
+        update_score += 1200 * (level + 1)
     return update_score
+
+
+def display_game_over(canvas, level, total_score):
+    canvas.create_rectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, fill="grey50", stipple="gray50")
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 3, font='Times 40 bold', text='GAME OVER!', fill='white')
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 2, font='Times 40 bold', text=f"You reached level {level}!", fill='white')
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 3, font='Times 40 bold', text=f"Your score: {total_score}", fill = 'white')
 
 
 def main():
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'Tetris 2.0')
     draw_grid(canvas)
-    total_score = 0
-    total_lines = 0
-    level = 1
+    total_score = total_lines = level = 0
+    score_label = canvas.create_text(20, 20, anchor='w', fill='white', font='Times 14', text=f"Score: {total_score}")
+    level_label = canvas.create_text(CANVAS_WIDTH - 20, 20, anchor='e', fill='white', font='Times 14', text=f"Level: {level}")
+
     while not game_over(canvas):
         play_shape(canvas, level)
         lines_removed = remove_completed_row(canvas)
         total_lines += lines_removed
-        level = (total_lines // 10) + 1
+        level = (total_lines // 10)
         total_score += get_score(lines_removed, level)
+        if get_score(lines_removed, level) > 0:
+            canvas.delete(score_label)
+            score_label = canvas.create_text(20, 20, anchor='w', fill='white', font='Times 14', text=f"Score: {total_score}")
+
+        canvas.delete(level_label)
+        level_label = canvas.create_text(CANVAS_WIDTH - 20, 20, anchor='e', fill='white', font='Times 14', text=f"Level: {level}")
 
         print("score: ", total_score, "level: ", level, "total_lines: ", total_lines)
 
-    canvas.create_rectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, fill="grey50", stipple="gray50")
-    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 3, font='Times 40 bold', text='GAME OVER!', fill='white')
-    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 2, font='Times 40 bold', text=f"You reached level {level}!", fill='white')
-    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 3, font='Times 40 bold', text=f"Your score: {total_score}", fill = 'white')
+    display_game_over(canvas, level, total_score)
     canvas.mainloop()
 
 
