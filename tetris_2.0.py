@@ -16,7 +16,7 @@ TODO: Show preview (spawn tetromino above the canvas, move once previous tetromi
 TODO: Legal move for rotating pieces
 TODO: Could I make the line flash before it disappears?
 TODO: Decompose objects_left, objects_right, objects_below
-TODO: Create levels with blocks in the way
+TODO: Create levels with squares in the way
 TODO: Pause the game
 """
 
@@ -31,21 +31,21 @@ import math
 CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
 CANVAS_HEIGHT = 1000    # Height of drawing canvas in pixels
 CANVAS_MID = CANVAS_WIDTH // 2
-UNIT_SIZE = 50          # Size of unit block within tetromino
-Y_SPEED = UNIT_SIZE
-X_SPEED = UNIT_SIZE
+SQUARE_LENGTH = 50          # Size of unit square within tetromino
+Y_SPEED = SQUARE_LENGTH
+X_SPEED = SQUARE_LENGTH
 
 
 # Vertices for individual squares, created above the canvas, o and l are spawned in middle
 # The rest of the tetrominos are spawned middle left
-BLOCK_1_POINTS = [CANVAS_MID - UNIT_SIZE * 2, -UNIT_SIZE * 2, CANVAS_MID - UNIT_SIZE, -UNIT_SIZE]
-BLOCK_2_POINTS = [CANVAS_MID - UNIT_SIZE, -UNIT_SIZE * 2, CANVAS_MID, -UNIT_SIZE]
-BLOCK_3_POINTS = [CANVAS_MID, -UNIT_SIZE * 2, CANVAS_MID + UNIT_SIZE, -UNIT_SIZE]
-BLOCK_4_POINTS = [CANVAS_MID + UNIT_SIZE, -UNIT_SIZE * 2, CANVAS_MID + UNIT_SIZE * 2, -UNIT_SIZE]
-BLOCK_5_POINTS = [CANVAS_MID - UNIT_SIZE * 2, -UNIT_SIZE, CANVAS_MID - UNIT_SIZE, 0]
-BLOCK_6_POINTS = [CANVAS_MID - UNIT_SIZE, -UNIT_SIZE, CANVAS_MID, 0]
-BLOCK_7_POINTS = [CANVAS_MID, -UNIT_SIZE, CANVAS_MID + UNIT_SIZE, 0]
-BLOCK_8_POINTS = [CANVAS_MID + UNIT_SIZE, -UNIT_SIZE, CANVAS_MID + UNIT_SIZE * 2, 0]
+SQUARE_1_POINTS = [CANVAS_MID - SQUARE_LENGTH * 2, -SQUARE_LENGTH * 2, CANVAS_MID - SQUARE_LENGTH, -SQUARE_LENGTH]
+SQUARE_2_POINTS = [CANVAS_MID - SQUARE_LENGTH, -SQUARE_LENGTH * 2, CANVAS_MID, -SQUARE_LENGTH]
+SQUARE_3_POINTS = [CANVAS_MID, -SQUARE_LENGTH * 2, CANVAS_MID + SQUARE_LENGTH, -SQUARE_LENGTH]
+SQUARE_4_POINTS = [CANVAS_MID + SQUARE_LENGTH, -SQUARE_LENGTH * 2, CANVAS_MID + SQUARE_LENGTH * 2, -SQUARE_LENGTH]
+SQUARE_5_POINTS = [CANVAS_MID - SQUARE_LENGTH * 2, -SQUARE_LENGTH, CANVAS_MID - SQUARE_LENGTH, 0]
+SQUARE_6_POINTS = [CANVAS_MID - SQUARE_LENGTH, -SQUARE_LENGTH, CANVAS_MID, 0]
+SQUARE_7_POINTS = [CANVAS_MID, -SQUARE_LENGTH, CANVAS_MID + SQUARE_LENGTH, 0]
+SQUARE_8_POINTS = [CANVAS_MID + SQUARE_LENGTH, -SQUARE_LENGTH, CANVAS_MID + SQUARE_LENGTH * 2, 0]
 
 
 def create_game_board():
@@ -207,70 +207,70 @@ def make_randomized_tetromino(canvas):
 
 # Create tetromino methods
 def make_z_tetromino(canvas):
-    block1 = make_unit_block(canvas, BLOCK_7_POINTS, 'red')
-    block2 = make_unit_block(canvas, BLOCK_6_POINTS, 'red')
-    block3 = make_unit_block(canvas, BLOCK_2_POINTS, 'red')
-    block4 = make_unit_block(canvas, BLOCK_1_POINTS, 'red')
+    square1 = make_unit_square(canvas, SQUARE_7_POINTS, 'red')
+    square2 = make_unit_square(canvas, SQUARE_6_POINTS, 'red')
+    square3 = make_unit_square(canvas, SQUARE_2_POINTS, 'red')
+    square4 = make_unit_square(canvas, SQUARE_1_POINTS, 'red')
 
-    return [block1, block2, block3, block4]
+    return [square1, square2, square3, square4]
 
 
 def make_s_tetromino(canvas):
-    block1 = make_unit_block(canvas, BLOCK_5_POINTS, 'green')
-    block2 = make_unit_block(canvas, BLOCK_6_POINTS, 'green')
-    block3 = make_unit_block(canvas, BLOCK_2_POINTS, 'green')
-    block4 = make_unit_block(canvas, BLOCK_3_POINTS, 'green')
+    square1 = make_unit_square(canvas, SQUARE_5_POINTS, 'green')
+    square2 = make_unit_square(canvas, SQUARE_6_POINTS, 'green')
+    square3 = make_unit_square(canvas, SQUARE_2_POINTS, 'green')
+    square4 = make_unit_square(canvas, SQUARE_3_POINTS, 'green')
 
-    return [block1, block2, block3, block4]
+    return [square1, square2, square3, square4]
 
 
 def make_t_tetromino(canvas):
-    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'purple')
-    block2 = make_unit_block(canvas, BLOCK_5_POINTS, 'purple')
-    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'purple')
-    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'purple')
+    square1 = make_unit_square(canvas, SQUARE_2_POINTS, 'purple')
+    square2 = make_unit_square(canvas, SQUARE_5_POINTS, 'purple')
+    square3 = make_unit_square(canvas, SQUARE_6_POINTS, 'purple')
+    square4 = make_unit_square(canvas, SQUARE_7_POINTS, 'purple')
 
-    return [block1, block2, block3, block4]
+    return [square1, square2, square3, square4]
 
 
 def make_l_tetromino(canvas):
-    block1 = make_unit_block(canvas, BLOCK_3_POINTS, 'orange')
-    block2 = make_unit_block(canvas, BLOCK_7_POINTS, 'orange')
-    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'orange')
-    block4 = make_unit_block(canvas, BLOCK_5_POINTS, 'orange')
+    square1 = make_unit_square(canvas, SQUARE_3_POINTS, 'orange')
+    square2 = make_unit_square(canvas, SQUARE_7_POINTS, 'orange')
+    square3 = make_unit_square(canvas, SQUARE_6_POINTS, 'orange')
+    square4 = make_unit_square(canvas, SQUARE_5_POINTS, 'orange')
 
-    return [block1, block2, block3, block4]
+    return [square1, square2, square3, square4]
 
 
 def make_j_tetromino(canvas):
-    block1 = make_unit_block(canvas, BLOCK_1_POINTS, 'blue')
-    block2 = make_unit_block(canvas, BLOCK_5_POINTS, 'blue')
-    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'blue')
-    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'blue')
+    square1 = make_unit_square(canvas, SQUARE_1_POINTS, 'blue')
+    square2 = make_unit_square(canvas, SQUARE_5_POINTS, 'blue')
+    square3 = make_unit_square(canvas, SQUARE_6_POINTS, 'blue')
+    square4 = make_unit_square(canvas, SQUARE_7_POINTS, 'blue')
 
-    return [block1, block2, block3, block4]
+    return [square1, square2, square3, square4]
 
 
 def make_long_rect(canvas):
-    block1 = make_unit_block(canvas, BLOCK_1_POINTS, 'cyan')
-    block2 = make_unit_block(canvas, BLOCK_2_POINTS, 'cyan')
-    block3 = make_unit_block(canvas, BLOCK_3_POINTS, 'cyan')
-    block4 = make_unit_block(canvas, BLOCK_4_POINTS, 'cyan')
+    square1 = make_unit_square(canvas, SQUARE_1_POINTS, 'cyan')
+    square2 = make_unit_square(canvas, SQUARE_2_POINTS, 'cyan')
+    square3 = make_unit_square(canvas, SQUARE_3_POINTS, 'cyan')
+    square4 = make_unit_square(canvas, SQUARE_4_POINTS, 'cyan')
 
-    return [block1, block2, block3, block4]
+    return [square1, square2, square3, square4]
 
 
 def make_square_tetromino(canvas):
-    block1 = make_unit_block(canvas, BLOCK_2_POINTS, 'yellow')
-    block2 = make_unit_block(canvas, BLOCK_3_POINTS, 'yellow')
-    block3 = make_unit_block(canvas, BLOCK_6_POINTS, 'yellow')
-    block4 = make_unit_block(canvas, BLOCK_7_POINTS, 'yellow')
+    square1 = make_unit_square(canvas, SQUARE_2_POINTS, 'yellow')
+    square2 = make_unit_square(canvas, SQUARE_3_POINTS, 'yellow')
+    square3 = make_unit_square(canvas, SQUARE_6_POINTS, 'yellow')
+    square4 = make_unit_square(canvas, SQUARE_7_POINTS, 'yellow')
 
-    return [block1, block2, block3, block4]
+    return [square1, square2, square3, square4]
 
 
-def make_unit_block(canvas, block, color):
-    return canvas.create_rectangle(block[0], block[1], block[2], block[3], outline='grey30', fill=color, tags='tetromino')
+def make_unit_square(canvas, square, color):
+    return canvas.create_rectangle(square[0], square[1], square[2], square[3], outline='grey30', fill=color, tags='tetromino')
 
 
 def make_canvas(width, height, title):
@@ -286,9 +286,9 @@ def make_canvas(width, height, title):
 
 
 def draw_grid(canvas):
-    for i in range(0, CANVAS_HEIGHT + 1, UNIT_SIZE):
+    for i in range(0, CANVAS_HEIGHT + 1, SQUARE_LENGTH):
         canvas.create_line(0, i, CANVAS_WIDTH, i, fill='grey10')
-    for i in range(UNIT_SIZE, CANVAS_WIDTH, UNIT_SIZE):
+    for i in range(SQUARE_LENGTH, CANVAS_WIDTH, SQUARE_LENGTH):
         canvas.create_line(i, 0, i, CANVAS_HEIGHT, fill='grey10')
 
 
@@ -303,26 +303,26 @@ def all_boxes(canvas):
 
 def remove_completed_row(canvas):
     rows_removed = 0
-    for y in range(-1, CANVAS_HEIGHT - UNIT_SIZE, UNIT_SIZE):
+    for y in range(-1, CANVAS_HEIGHT - SQUARE_LENGTH, SQUARE_LENGTH):
         overlap = canvas.find_enclosed(-1, y, CANVAS_WIDTH + 1, y + 52)
         if len(overlap) > 11:
             for item in overlap:
                 if canvas.gettags(item) == ('tetromino',):
                     canvas.delete(item)
                     rows_removed += 1
-            blocks_above_line = canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, overlap[0] * UNIT_SIZE)
+            squares_above_line = canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, overlap[0] * SQUARE_LENGTH)
             time.sleep(1/5)
-            for block in blocks_above_line:
-                if canvas.gettags(block) == ('tetromino',):
-                    canvas.move(block, 0, UNIT_SIZE)
+            for square in squares_above_line:
+                if canvas.gettags(square) == ('tetromino',):
+                    canvas.move(square, 0, SQUARE_LENGTH)
     return rows_removed // 10
     
 
 def rotate(canvas, tetromino):
     """
-    Pivot = Obtain the coordinates for the block that will not be moving
-    All the other blocks will move around this block
-    In this game, this block will always be the third block in 'tetromino'
+    Pivot = Obtain the coordinates for the square that will not be moving
+    All the other squares will move around this square
+    In this game, this square will always be the third square in 'tetromino'
     """
     pivot = (get_tetromino_coords(canvas, tetromino)[2])
     px1 = pivot[0]
@@ -341,8 +341,8 @@ def rotate(canvas, tetromino):
     if count == 4:
         return
 
-    for block in lst:
-        coord = canvas.coords(block)
+    for square in lst:
+        coord = canvas.coords(square)
         bx1 = coord[0]
         by1 = coord[1]
         bx2 = coord[2]
@@ -354,7 +354,7 @@ def rotate(canvas, tetromino):
         x_move = -x_diff + y_diff
         y_move = -x_diff - y_diff
 
-        canvas.move(block, x_move, y_move)
+        canvas.move(square, x_move, y_move)
 
 
 def key_pressed(event, canvas, tetromino):
@@ -363,17 +363,17 @@ def key_pressed(event, canvas, tetromino):
     This was written with the help of Code In Place Section Leader
     """
     sym = event.keysym.lower()
-    if sym == "left" and get_left_x(canvas, tetromino) >= 0 + UNIT_SIZE and not objects_left(canvas, tetromino):
+    if sym == "left" and get_left_x(canvas, tetromino) >= 0 + SQUARE_LENGTH and not objects_left(canvas, tetromino):
         for i in range(4):
-            canvas.move(tetromino[i], -UNIT_SIZE, 0)
-    elif sym == "right" and get_right_x(canvas, tetromino) <= CANVAS_WIDTH - UNIT_SIZE and not objects_right(canvas, tetromino):
+            canvas.move(tetromino[i], -SQUARE_LENGTH, 0)
+    elif sym == "right" and get_right_x(canvas, tetromino) <= CANVAS_WIDTH - SQUARE_LENGTH and not objects_right(canvas, tetromino):
         for i in range(4):
-            canvas.move(tetromino[i], UNIT_SIZE, 0)
+            canvas.move(tetromino[i], SQUARE_LENGTH, 0)
     elif sym == "up":
         rotate(canvas, tetromino)
-    elif sym == "down" and get_bottom_y(canvas, tetromino) <= CANVAS_HEIGHT - UNIT_SIZE and not objects_below(canvas, tetromino):
+    elif sym == "down" and get_bottom_y(canvas, tetromino) <= CANVAS_HEIGHT - SQUARE_LENGTH and not objects_below(canvas, tetromino):
         for i in range(4):
-            canvas.move(tetromino[i], 0, UNIT_SIZE)
+            canvas.move(tetromino[i], 0, SQUARE_LENGTH)
     elif sym == "space":
         while not touching_game_floor(canvas, tetromino) and not objects_below(canvas, tetromino):
             for i in range(4):
@@ -391,7 +391,7 @@ def get_tetromino_coords(canvas, tetromino):
 
 
 def game_over(canvas):
-    return len(canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, UNIT_SIZE + 1)) > 4
+    return len(canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, SQUARE_LENGTH + 1)) > 4
 
 
 def get_score(rows_removed, level):
