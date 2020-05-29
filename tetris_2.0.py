@@ -356,7 +356,7 @@ def get_shape_coords(canvas, shape):
     return shape_coords
 
 
-def play_shape(canvas, level):
+def play_tetromino(canvas, level):
     """ Plays one shape until shape is placed """
     shape = make_randomized_shape(canvas)
     canvas.bind("<Key>", lambda event: key_pressed(event, canvas, shape))
@@ -397,25 +397,53 @@ def display_game_over(canvas, level, total_score):
     canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 3, font='Times 25 bold', text=f"Your score: {total_score}", fill = 'white')
 
 
-def main():
+def create_game_board():
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'Tetris 2.0')
     draw_grid(canvas)
+    return canvas
+
+
+def create_score_label(canvas, total_score):
+    return canvas.create_text(
+        20, 20, 
+        anchor='w', 
+        fill='white', 
+        font='Times 14', 
+        text=f"Score: {total_score}"
+    )
+
+
+def create_level_label(canvas, level):
+    return canvas.create_text(
+        CANVAS_WIDTH - 20, 20, 
+        anchor='e', 
+        fill='white', 
+        font='Times 14', 
+        text=f"Level: {level}"
+    )
+
+
+def main():
+    canvas = create_game_board()
+
     total_score = total_lines = level = 0
-    score_label = canvas.create_text(20, 20, anchor='w', fill='white', font='Times 14', text=f"Score: {total_score}")
-    level_label = canvas.create_text(CANVAS_WIDTH - 20, 20, anchor='e', fill='white', font='Times 14', text=f"Level: {level}")
+
+    score_label = create_score_label(canvas, total_score)
+    level_label = create_level_label(canvas, level)
+
 
     while not game_over(canvas):
-        play_shape(canvas, level)
+        play_tetromino(canvas, level)
         lines_removed = remove_completed_row(canvas)
         total_lines += lines_removed
-        level = (total_lines // 10)
+        level = (total_lines // 10)  # For every 10 lines removed, level increases by 1
         total_score += get_score(lines_removed, level)
-        if get_score(lines_removed, level) > 0:
+        if get_score(lines_removed, level) > 0:  # Update the score if lines were removed
             canvas.delete(score_label)
-            score_label = canvas.create_text(20, 20, anchor='w', fill='white', font='Times 14', text=f"Score: {total_score}")
+            score_label = create_score_label(canvas, total_score)
 
-        canvas.delete(level_label)
-        level_label = canvas.create_text(CANVAS_WIDTH - 20, 20, anchor='e', fill='white', font='Times 14', text=f"Level: {level}")
+        canvas.delete(level_label)  # Currently updates every play, change to increase level
+        level_label = create_level_label(canvas, level)
 
     display_game_over(canvas, level, total_score)
     canvas.mainloop()
