@@ -32,8 +32,8 @@ CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
 CANVAS_HEIGHT = 1000    # Height of drawing canvas in pixels
 CANVAS_MID = CANVAS_WIDTH // 2
 UNIT_SIZE = 50          # Size of unit block within shape
-Y_SPEED = 50
-X_SPEED = 50
+Y_SPEED = UNIT_SIZE
+X_SPEED = UNIT_SIZE
 
 
 # Vertices for individual squares, created above the canvas, o and l are spawned in middle
@@ -255,7 +255,7 @@ def draw_grid(canvas):
     for i in range(0, CANVAS_HEIGHT + 1, UNIT_SIZE):
         canvas.create_line(0, i, CANVAS_WIDTH, i, fill='grey10')
     for i in range(UNIT_SIZE, CANVAS_WIDTH, UNIT_SIZE):
-        canvas.create_line(i, 0, i, 1000, fill='grey10')
+        canvas.create_line(i, 0, i, CANVAS_HEIGHT, fill='grey10')
 
 
 def all_boxes(canvas):
@@ -345,7 +345,7 @@ def key_pressed(event, canvas, shape):
             for i in range(4):
                 canvas.move(shape[i], 0, Y_SPEED)
             canvas.update()
-            time.sleep(1/1000)
+            time.sleep(1/3000)
 
 
 def get_shape_coords(canvas, shape):
