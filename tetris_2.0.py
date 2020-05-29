@@ -1,16 +1,7 @@
 """
 File: tetris_2.0.py
 ----------------
-
-My second attempt at tetris using Python and Tkinter.
-Functionalities include:
-- Tetrominos can rotate
-- Completed lines disappear
-- Detects end of game
-- Hard drop with space bar (technically it is just falling super fast)
-- Advancing levels increases fall speed
-- Displays score and level during game play
-- Tetris song if soundplay module is installed
+How to play and rules at README.md
 
 TODO: Show preview (spawn tetromino above the canvas, move once previous tetromino is placed)
 TODO: Legal move for rotating pieces
@@ -416,14 +407,15 @@ def play_tetromino(canvas, level):
     return tetromino
 
 
-def display_game_over(canvas, level, total_score):
+def display_game_over(canvas, level, total_score, total_rows_removed):
     # Create gray 'transparent' overlay
     canvas.create_rectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, fill="grey50", stipple="gray50")
 
-    # Create text - GAME OVER, final level and final score
+    # Create text - GAME OVER, final level, final score, and total rows cleared
     canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 3, font='Times 40 bold', text='GAME OVER!', fill='white')
     canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 2, font='Times 25 bold', text=f"You reached level {level}!", fill='white')
-    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 3, font='Times 25 bold', text=f"Your score: {total_score}", fill = 'white')
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 3, font='Times 25 bold', text=f"Your score: {total_score}", fill='white')
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 4, font='Times 25 bold', text=f"Rows cleared: {total_rows_removed}", fill='white')
 
 
 def main():
@@ -448,7 +440,7 @@ def main():
         canvas.delete(level_label)  # Currently updates every play, change to increase level
         level_label = create_level_label(canvas, level)
 
-    display_game_over(canvas, level, total_score)
+    display_game_over(canvas, level, total_score, total_rows_removed)
     canvas.mainloop()
 
 
