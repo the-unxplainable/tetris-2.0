@@ -12,5 +12,6 @@ Rules:
     - Advance to the next level by clearing 10 rows
     - Higher levels will have faster drops
     - Points awarded when rows are cleared, bonus for clearing a Tetris (4 rows)
+    - Game over when tetrominos reach the top of the screen
  
 
