@@ -9,15 +9,16 @@ Functionalities include:
 - Detects end of game
 - Hard drop with space bar (technically it is just falling super fast)
 - Tetris song if soundplay module is installed
+- Calculates score, displays when game is over
+- Calculates the level, displays when game is over
+- Adding level increases drop speed
 
-TODO: Show score
 TODO: Show preview (spawn shape above the canvas, move once previous shape is placed)
 TODO: Legal move for rotating pieces
 TODO: Could I make the line flash before it disappears?
 TODO: Decompose objects_left, objects_right, objects_below
-TODO: Add music: playsound('/path/to/a/sound/file/you/want/to/play.mp3', block=False)
-TODO: Create multiple levels?
 TODO: Create levels with blocks in the way
+TODO: Pause the game
 """
 
 import tkinter
@@ -268,18 +269,20 @@ def all_boxes(canvas):
 
 
 def remove_completed_row(canvas):
-
+    lines_removed = 0
     for y in range(-1, CANVAS_HEIGHT - UNIT_SIZE, UNIT_SIZE):
         overlap = canvas.find_enclosed(-1, y, CANVAS_WIDTH + 1, y + 52)
         if len(overlap) > 11:
             for item in overlap:
                 if item > 30:
                     canvas.delete(item)
+                    lines_removed += 1
             blocks_above_line = canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, overlap[0] * UNIT_SIZE)
             time.sleep(1/5)
             for block in blocks_above_line:
                 if block > 30:
                     canvas.move(block, 0, UNIT_SIZE)
+    return lines_removed // 10
     
 
 def rotate(canvas, shape):
@@ -354,35 +357,59 @@ def get_shape_coords(canvas, shape):
     return shape_coords
 
 
-def play_shape(canvas):
+def play_shape(canvas, level):
     """ Plays one shape until shape is placed """
     shape = make_randomized_shape(canvas)
     canvas.bind("<Key>", lambda event: key_pressed(event, canvas, shape))
     canvas.focus_set()  # Canvas now has the keyboard focus
-    make_shape_fall(canvas, shape)
+    make_shape_fall(canvas, shape, level)
     return shape
 
 
-def make_shape_fall(canvas, shape):
+def make_shape_fall(canvas, shape, level):
     while not is_touching_bottom(canvas, shape) and not objects_below(canvas, shape):
         for i in range(4):
             canvas.move(shape[i], 0, Y_SPEED)
         canvas.update()
-        time.sleep(DELAY)
+        time.sleep(1 / (level / 2 + 3))
 
 
 def game_over(canvas):
     return len(canvas.find_enclosed(-1, -1, CANVAS_WIDTH + 1, UNIT_SIZE + 1)) > 2
 
 
+def get_score(lines_removed, level):
+    update_score = 0
+    if lines_removed == 1:
+        update_score += 40 * level
+    elif lines_removed == 2:
+        update_score += 100 * level
+    elif lines_removed == 3:
+        update_score += 300 * level
+    elif lines_removed == 4:
+        update_score += 1200 * level
+    return update_score
+
+
 def main():
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'Tetris 2.0')
     draw_grid(canvas)
+    total_score = 0
+    total_lines = 0
+    level = 1
     while not game_over(canvas):
-        play_shape(canvas)
-        remove_completed_row(canvas)
+        play_shape(canvas, level)
+        lines_removed = remove_completed_row(canvas)
+        total_lines += lines_removed
+        level = (total_lines // 10) + 1
+        total_score += get_score(lines_removed, level)
 
-    canvas.create_text(40, 500, anchor='w', font='Times 40 bold', text='GAME OVER!', fill='white')
+        print("score: ", total_score, "level: ", level, "total_lines: ", total_lines)
+
+    canvas.create_rectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, fill="grey50", stipple="gray50")
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 3, font='Times 40 bold', text='GAME OVER!', fill='white')
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 2, font='Times 40 bold', text=f"You reached level {level}!", fill='white')
+    canvas.create_text(CANVAS_MID, CANVAS_HEIGHT - CANVAS_HEIGHT // 3, font='Times 40 bold', text=f"Your score: {total_score}", fill = 'white')
     canvas.mainloop()
 
 
