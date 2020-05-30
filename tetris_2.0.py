@@ -90,6 +90,21 @@ def objects_below(canvas, tetromino):
     return False
 
 
+def objects_below_down_arrow(canvas, tetromino):
+    coords = get_tetromino_coords(canvas, tetromino)  # Returns list of 4 lists
+    for coord in coords:
+        x1, y1, x2, y2 = coord[0], coord[1], coord[2], coord[3]
+        coord_bottom_y = canvas.find_overlapping(x1, y2 + SQUARE_LENGTH, x2, y2 + SQUARE_LENGTH)
+        coord_right_x = canvas.find_overlapping(x2, y1, x2, y2 + SQUARE_LENGTH)
+        coord_left_x = canvas.find_overlapping(x1, y1, x1, y2 + SQUARE_LENGTH)
+
+        for neighbor in coord_bottom_y:
+            if canvas.gettags(neighbor) == ('tetromino',) and not is_self(canvas, tetromino, neighbor):
+                if neighbor in coord_right_x and neighbor in coord_left_x:
+                    return True
+    return False
+
+
 def is_self(canvas, tetromino, object_num):
     """
     This function detects if an object number is itself.
@@ -351,7 +366,7 @@ def key_pressed(event, canvas, tetromino):
             move_tetromino(canvas, tetromino, SQUARE_LENGTH, 0)
         while get_right_x(canvas, tetromino) > CANVAS_WIDTH:
             move_tetromino(canvas, tetromino, -SQUARE_LENGTH, 0)
-    elif sym == 'down' and get_bottom_y(canvas, tetromino) <= CANVAS_HEIGHT - SQUARE_LENGTH and not objects_below(canvas, tetromino):
+    elif sym == 'down' and get_bottom_y(canvas, tetromino) <= CANVAS_HEIGHT - SQUARE_LENGTH and not objects_below_down_arrow(canvas, tetromino):
         move_tetromino(canvas, tetromino, 0, SQUARE_LENGTH * 2)
     elif sym == 'space':
         while not touching_game_floor(canvas, tetromino) and not objects_below(canvas, tetromino):
