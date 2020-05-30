@@ -44,7 +44,7 @@ def create_score_label(canvas, total_score):
         anchor='w', 
         fill='white', 
         font='Times 18', 
-        text=f"Score: {total_score}"
+        text=f'Score: {total_score}'
     )
 
 
@@ -54,7 +54,7 @@ def create_level_label(canvas, level):
         anchor='e', 
         fill='white', 
         font='Times 18', 
-        text=f"Level: {level}"
+        text=f'Level: {level}'
     )
 
 
@@ -130,7 +130,6 @@ def objects_right(canvas, tetromino):
                 if neighbor in coord_top_y and neighbor in coord_bottom_y:
                     return True
     return False
-
 
 
 def valid_move(canvas, tetromino):
@@ -281,15 +280,6 @@ def draw_grid(canvas):
         canvas.create_line(i, 0, i, CANVAS_HEIGHT, fill='grey10')
 
 
-def all_boxes(canvas):
-    all_boxes = []
-    all_objects = canvas.find_all()
-    for thing in objects:
-        if canvas.gettags(thing) == ('tetromino',):
-            all_boxes.append(thing)
-    return all_boxes
-
-
 def remove_completed_row(canvas):
     rows_removed = 0
     for y in range(-1, CANVAS_HEIGHT - SQUARE_LENGTH, SQUARE_LENGTH):
@@ -351,19 +341,19 @@ def key_pressed(event, canvas, tetromino):
     This was written with the help of Code In Place Section Leader
     """
     sym = event.keysym.lower()
-    if sym == "left" and get_left_x(canvas, tetromino) >= 0 + SQUARE_LENGTH and not objects_left(canvas, tetromino):
+    if sym == 'left' and get_left_x(canvas, tetromino) >= 0 + SQUARE_LENGTH and not objects_left(canvas, tetromino):
         move_tetromino(canvas, tetromino, -SQUARE_LENGTH, 0)
-    elif sym == "right" and get_right_x(canvas, tetromino) <= CANVAS_WIDTH - SQUARE_LENGTH and not objects_right(canvas, tetromino):
+    elif sym == 'right' and get_right_x(canvas, tetromino) <= CANVAS_WIDTH - SQUARE_LENGTH and not objects_right(canvas, tetromino):
         move_tetromino(canvas, tetromino, SQUARE_LENGTH, 0)
-    elif sym == "up":
+    elif sym == 'up':
         rotate(canvas, tetromino)
         while get_left_x(canvas, tetromino) < 0:
             move_tetromino(canvas, tetromino, SQUARE_LENGTH, 0)
         while get_right_x(canvas, tetromino) > CANVAS_WIDTH:
             move_tetromino(canvas, tetromino, -SQUARE_LENGTH, 0)
-    elif sym == "down" and get_bottom_y(canvas, tetromino) <= CANVAS_HEIGHT - SQUARE_LENGTH and not objects_below(canvas, tetromino):
+    elif sym == 'down' and get_bottom_y(canvas, tetromino) <= CANVAS_HEIGHT - SQUARE_LENGTH and not objects_below(canvas, tetromino):
         move_tetromino(canvas, tetromino, 0, SQUARE_LENGTH * 2)
-    elif sym == "space":
+    elif sym == 'space':
         while not touching_game_floor(canvas, tetromino) and not objects_below(canvas, tetromino):
             move_tetromino(canvas, tetromino, 0, Y_SPEED)
             canvas.update()
@@ -398,7 +388,7 @@ def get_score(rows_removed, level):
 def play_tetromino(canvas, level):
     """ Plays one tetromino until it is placed """
     tetromino = make_randomized_tetromino(canvas)
-    canvas.bind("<Key>", lambda event: key_pressed(event, canvas, tetromino))
+    canvas.bind('<Key>', lambda event: key_pressed(event, canvas, tetromino))
     canvas.focus_set()  # Canvas now has the keyboard focus
     make_tetromino_fall(canvas, tetromino, level)
     return tetromino
@@ -406,7 +396,7 @@ def play_tetromino(canvas, level):
 
 def display_game_over(canvas, level, total_score, total_rows_removed):
     # Create gray 'transparent' overlay
-    canvas.create_rectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, fill="grey50", stipple="gray50")
+    canvas.create_rectangle(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, fill='grey50', stipple='gray50')
 
     # Create text - GAME OVER, final level, final score, and total rows cleared
     canvas.create_text(CANVAS_MID, CANVAS_HEIGHT // 3, font='Times 40 bold', text='GAME OVER!', fill='white')
