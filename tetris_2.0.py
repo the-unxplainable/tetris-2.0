@@ -2,21 +2,14 @@
 File: tetris_2.0.py
 ----------------
 How to play and rules at README.md
-
-TODO: Show preview (spawn tetromino above the canvas, move once previous tetromino is placed)
-TODO: Legal move for rotating pieces
-TODO: Could I make the line flash before it disappears?
-TODO: Decompose objects_left, objects_right, objects_below
-TODO: Create levels with squares in the way
-TODO: Pause the game
 """
 
 import tkinter
 import random
 import time
 import math
-# from soundplay import soundplay
-# soundplay("tetris_theme_song.mp3")
+from soundplay import soundplay
+soundplay("tetris_theme_song.mp3")
 
 # Constants for canvas
 CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
@@ -47,20 +40,20 @@ def create_game_board():
 
 def create_score_label(canvas, total_score):
     return canvas.create_text(
-        20, 20, 
+        20, 30, 
         anchor='w', 
         fill='white', 
-        font='Times 14', 
+        font='Times 18', 
         text=f"Score: {total_score}"
     )
 
 
 def create_level_label(canvas, level):
     return canvas.create_text(
-        CANVAS_WIDTH - 20, 20, 
+        CANVAS_WIDTH - 20, 30, 
         anchor='e', 
         fill='white', 
-        font='Times 14', 
+        font='Times 18', 
         text=f"Level: {level}"
     )
 
