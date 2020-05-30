@@ -8,8 +8,8 @@ import tkinter
 import random
 import time
 import math
-from soundplay import soundplay
-soundplay("tetris_theme_song.mp3")
+# from soundplay import soundplay
+# soundplay("tetris_theme_song.mp3")
 
 # Constants for canvas
 CANVAS_WIDTH = 500      # Width of drawing canvas in pixels
@@ -58,10 +58,15 @@ def create_level_label(canvas, level):
     )
 
 
+def move_tetromino(canvas, tetromino, x, y):  # Tetrominos are made of 4 squares, must move all 4 squares in tandem
+    for i in range(4):
+        canvas.move(tetromino[i], x, y)
+
+
 def make_tetromino_fall(canvas, tetromino, level):
     while not touching_game_floor(canvas, tetromino) and not objects_below(canvas, tetromino):
-        for i in range(4):  # Tetrominos are made of 4 squares, must move all 4 squares in tandem
-            canvas.move(tetromino[i], 0, Y_SPEED)
+        move_tetromino(canvas, tetromino, 0, Y_SPEED)
+
         canvas.update()
         time.sleep(1 / (level / 2 + 3))  # Calculation for fall speed based on level
 
@@ -340,7 +345,6 @@ def rotate(canvas, tetromino):
 
         canvas.move(square, x_move, y_move)
 
-
 def key_pressed(event, canvas, tetromino):
     """
     Respond to different arrow keys
@@ -348,20 +352,20 @@ def key_pressed(event, canvas, tetromino):
     """
     sym = event.keysym.lower()
     if sym == "left" and get_left_x(canvas, tetromino) >= 0 + SQUARE_LENGTH and not objects_left(canvas, tetromino):
-        for i in range(4):
-            canvas.move(tetromino[i], -SQUARE_LENGTH, 0)
+        move_tetromino(canvas, tetromino, -SQUARE_LENGTH, 0)
     elif sym == "right" and get_right_x(canvas, tetromino) <= CANVAS_WIDTH - SQUARE_LENGTH and not objects_right(canvas, tetromino):
-        for i in range(4):
-            canvas.move(tetromino[i], SQUARE_LENGTH, 0)
+        move_tetromino(canvas, tetromino, SQUARE_LENGTH, 0)
     elif sym == "up":
         rotate(canvas, tetromino)
+        while get_left_x(canvas, tetromino) < 0:
+            move_tetromino(canvas, tetromino, SQUARE_LENGTH, 0)
+        while get_right_x(canvas, tetromino) > CANVAS_WIDTH:
+            move_tetromino(canvas, tetromino, -SQUARE_LENGTH, 0)
     elif sym == "down" and get_bottom_y(canvas, tetromino) <= CANVAS_HEIGHT - SQUARE_LENGTH and not objects_below(canvas, tetromino):
-        for i in range(4):
-            canvas.move(tetromino[i], 0, SQUARE_LENGTH)
+        move_tetromino(canvas, tetromino, 0, SQUARE_LENGTH * 2)
     elif sym == "space":
         while not touching_game_floor(canvas, tetromino) and not objects_below(canvas, tetromino):
-            for i in range(4):
-                canvas.move(tetromino[i], 0, Y_SPEED)
+            move_tetromino(canvas, tetromino, 0, Y_SPEED)
             canvas.update()
             time.sleep(1/3000)
 
